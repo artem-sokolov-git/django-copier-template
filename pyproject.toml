@@ -1,0 +1,30 @@
+[project]
+name = "django-copier-template"
+version = "0.1.0"
+description = "A modern Copier template for Django projects with production-ready tooling and best practices"
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [
+    { name = "Artem Sokolov", email = "artem.sokolov.dev@gmail.com" }
+]
+keywords = ["django", "copier", "template", "python", "web", "boilerplate"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.12",
+    "Framework :: Django",
+    "Topic :: Software Development :: Code Generators",
+]
+
+[project.urls]
+Homepage = "https://github.com/artem-sokolov-git/django-copier-template"
+Repository = "https://github.com/artem-sokolov-git/django-copier-template"
+Issues = "https://github.com/artem-sokolov-git/django-copier-template/issues"
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+]

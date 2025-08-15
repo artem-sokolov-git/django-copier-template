@@ -1,0 +1,135 @@
+_exclude:
+  - "*"
+  - "!*/"
+  - ".git"
+  - "/tests"
+
+_external_data:
+  defaults: defaults.yaml
+
+_message_before_copy: |
+  🚀 Welcome to Django Core Template!
+
+  This template helps you quickly create a modern Django project with:
+  • Pre-configured application architecture
+  • Choice of API framework (Django Ninja or DRF)
+  • Database setup (PostgreSQL or MySQL)
+  • Ready-to-use Docker configuration
+  • Development tools (linters, pre-commit hooks)
+
+  Answer a few questions and we'll create a development-ready project for you!
+
+project_name:
+  type: str
+  help: "What is the name of your project?"
+  default: Django Core Project
+
+project_slug:
+  type: str
+  default: "{{ project_name | lower | replace(' ', '_') }}"
+
+project_version:
+  type: str
+  help: "What is the version of your project?"
+  default: "{{ _external_data.defaults.project_version | default('0.1.0') }}"
+
+project_description:
+  type: str
+  help: "What is the description of your project?"
+  default: "This is a basic description of the project '{{ project_name }}'"
+
+python_version:
+  type: str
+  help: "What Python version do you want to use?"
+  default: "{{ _external_data.defaults.python_version | default('3.12') }}"
+
+author_name:
+  default: "{{ _external_data.defaults.author_name | default('default_author') }}"
+
+author_username:
+  default: "{{ author_name | lower | replace(' ', '') }}"
+
+author_email:
+  default: "{{ _external_data.defaults.author_email | default('author@email.com') }}"
+
+api_framework:
+  type: str
+  help: "Which API framework do you want to use?"
+  choices:
+    - ninja
+    - drf
+  default: "{{ _external_data.defaults.api_framework | default('ninja') }}"
+
+linter:
+  type: str
+  help: "Which linter do you want to use?"
+  choices:
+    - ruff
+    - flake8
+  default: "{{ _external_data.defaults.linter | default('ruff') }}"
+
+database_type:
+  type: str
+  help: "Which database do you want to use?"
+  choices:
+    - postgresql
+    - mysql
+  default: "{{ _external_data.defaults.database.type | default('postgresql') }}"
+
+database_login:
+  type: str
+  help: "What username will you use for the database?"
+  default: "{{ _external_data.defaults.database.login | default('admin') }}"
+
+database_password:
+  type: str
+  help: "What password will you use for the database?"
+  default: "{{ _external_data.defaults.database.password | default('admin123') }}"
+
+superuser_login:
+  type: str
+  help: "What login will you use to authorize the superuser?"
+  default: "{{ _external_data.defaults.superuser.login | default('admin') }}"
+
+superuser_email:
+  type: str
+  help: "What email will you use to authorize the superuser?"
+  default: "{{ _external_data.defaults.superuser.email | default('admin@email.com') }}"
+
+superuser_password:
+  type: str
+  help: "What password will you use to authorize the superuser?"
+  default: "{{ _external_data.defaults.superuser.password | default('admin123') }}"
+
+docker_django_port:
+  type: str
+  help: "Which port will you use for the web application?"
+  default: 8000
+
+_message_after_copy: |
+    🎉 Your project "{{ project_name }}" has been created successfully!
+
+    Next steps:
+    1. Navigate to your project: cd {{ project_slug }}
+    2. Start development containers: make up
+    3. Apply migrations: make migrate
+    4. Create superuser: make admin
+    5. Open http://localhost:{{ docker_django_port }} in your browser
+
+    Happy coding! 🚀
+
+_tasks:
+  - command: "mv {{ project_slug }}/.env.example {{ project_slug }}/.env"
+    when: "{{ _copier_operation == 'copy' }}"
+  - command: "git init && git add . && git commit -m '{{ project_name }} initialization commit'"
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+  - command: "uv sync --all-extras"
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+  - command: "uv run pre-commit install && uv run pre-commit autoupdate"
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+  - command: "uv run pre-commit run --all-files --show-diff-on-failure"
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
