@@ -44,7 +44,8 @@ DJANGO_APPS = [
     "django.contrib.staticfiles",
 ]
 
-THIRD_PARTY_APPS = [
+THIRD_PARTY_APPS: list[str] = [
+    # There should be batteries here.
 {%- if api_framework == "drf" %}
     "rest_framework",
     "drf_spectacular",
