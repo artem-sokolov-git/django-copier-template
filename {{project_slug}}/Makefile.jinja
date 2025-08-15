@@ -1,0 +1,65 @@
+include .env
+export
+
+{%- if database == "postgresql" %}
+STORAGE_CON = {{project_slug}}_psql
+AUTH = psql -U $$POSTGRES_USER -d $$POSTGRES_DB
+{%- else %}
+STORAGE_CON = {{project_slug}}_mysql
+AUTH = mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
+{%- endif %}
+DC = docker compose
+MANAGE = uv run python manage.py
+PRECOMMIT = uv run pre-commit
+
+.PHONY: up
+up:
+	$(DC) up -d --build --remove-orphans
+
+.PHONY: down
+down:
+	$(DC) down
+
+.PHONY: reset
+reset: down up
+
+.PHONY: clean-volumes
+clean-volumes:
+	$(DC) down -v
+
+.PHONY: rebuild
+rebuild: clean-volumes
+	$(DC) build --no-cache
+	$(DC) up -d --remove-orphans
+
+.PHONY: logs
+logs:
+	$(DC) logs -f
+
+.PHONY: migrate
+migrate:
+	$(DC) exec web $(MANAGE) migrate
+
+.PHONY: migrations
+migrations:
+	$(DC) exec web $(MANAGE) makemigrations
+
+.PHONY: admin
+admin:
+	$(DC) exec web $(MANAGE) create_admin
+
+.PHONY: dj-shell
+dj-shell:
+	$(DC) exec web $(MANAGE) shell
+
+.PHONY: db-shell
+db-shell:
+{%- if database_type == "postgresql" %}
+	$(DC) exec postgresql $(AUTH)
+{%- else %}
+	$(DC) exec mysql $(AUTH)
+{%- endif %}
+
+.PHONY: pre-commit-check
+pre-commit-check:
+	$(PRECOMMIT) run --all-files --show-diff-on-failure
