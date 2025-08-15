@@ -1,0 +1,16 @@
+from django.contrib.auth import get_user_model
+from django.core.management.base import BaseCommand
+
+from core.project.settings.base import env
+
+User = get_user_model()
+
+
+class Command(BaseCommand):
+    def handle(self, *args, **options):
+        username = env.str("SUPERUSER_LOGIN", "{{superuser_login}}")
+        email = env.str("SUPERUSER_EMAIL", "{{superuser_email}}")
+        password = env.str("SUPERUSER_PASSWORD", "{{superuser_password}}")
+
+        if all([username, email, password]):
+            User.objects.create_superuser(username, email, password)  # type: ignore[attr-defined]
