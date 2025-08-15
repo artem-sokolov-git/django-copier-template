@@ -1,13 +1,6 @@
 include .env
 export
 
-{%- if database == "postgresql" %}
-STORAGE_CON = {{project_slug}}_psql
-AUTH = psql -U $$POSTGRES_USER -d $$POSTGRES_DB
-{%- else %}
-STORAGE_CON = {{project_slug}}_mysql
-AUTH = mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
-{%- endif %}
 DC = docker compose
 MANAGE = uv run python manage.py
 PRECOMMIT = uv run pre-commit
@@ -55,9 +48,9 @@ dj-shell:
 .PHONY: db-shell
 db-shell:
 {%- if database_type == "postgresql" %}
-	$(DC) exec postgresql $(AUTH)
+	$(DC) exec postgresql psql -U $$POSTGRES_USER -d $$POSTGRES_DB
 {%- else %}
-	$(DC) exec mysql $(AUTH)
+	$(DC) exec mysql mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
 {%- endif %}
 
 .PHONY: pre-commit-check
