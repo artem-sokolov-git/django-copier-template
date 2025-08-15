@@ -1,0 +1,52 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-toml
+      - id: check-added-large-files
+      - id: check-merge-conflict
+      - id: debug-statements
+
+  {%- if linter == "ruff" %}
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.12.9
+    hooks:
+      - id: ruff
+        args: [--fix]
+      - id: ruff-format
+  {%- else %}
+  - repo: https://github.com/pycqa/isort
+    rev: 6.0.1
+    hooks:
+      - id: isort
+        name: isort (python)
+
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
+  {%- endif %}
+
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.17.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [
+          django-environ,
+          django-stubs,
+          {%- if api_framework == "drf" %}
+          djangorestframework,
+          drf_spectacular,
+          types-requests,
+          {%- else %}
+          django-ninja,
+          {%- endif %}
+          {%- if database == "postgresql" %}
+          psycopg2-binary,
+          {%- else %}
+          mysqlclient,
+          {%- endif %}
+        ]
