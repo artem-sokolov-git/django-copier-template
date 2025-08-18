@@ -16,43 +16,37 @@ services:
       - network
     depends_on:
       {%- if database_type == "postgresql" %}
-      postgresql:
+      postgresql: {%- endif %}
+      {%- if database_type == "mysql" %}
+      mysql: {%- endif %}
         condition: service_healthy
-      {%- else %}
-      mysql:
-        condition: service_healthy
-      {%- endif %}
 
   {%- if database_type == "postgresql" %}
   postgresql:
     image: postgres:17.5
-    container_name: {{project_slug}}_postgresql
+    container_name: {{database_name}}
     volumes:
       - data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-postgresql_db}
-      POSTGRES_USER: ${POSTGRES_USER:-admin}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-admin123}
+    env_file:
+      - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-admin} -d ${POSTGRES_DB:-postgresql_db}"]
+      test: ["CMD-SHELL", "pg_isready -U {{database_user}} -d {{database_name}}"]
       interval: 5s
       timeout: 3s
       retries: 10
     restart: unless-stopped
     networks:
       - network
-  {%- else %}
+  {%- endif %}
 
+  {%- if database_type == "mysql" %}
   mysql:
     image: mysql:9.4.0
-    container_name: {{project_slug}}_mysql
+    container_name: {{database_name}}
     volumes:
       - data:/var/lib/mysql
-    environment:
-      MYSQL_DATABASE: ${MYSQL_DATABASE:-mysql_database}
-      MYSQL_USER: ${MYSQL_USER:-admin}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-admin123}
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
+    env_file:
+      - .env
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
       interval: 5s

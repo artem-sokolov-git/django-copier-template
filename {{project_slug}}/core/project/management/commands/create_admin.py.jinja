@@ -8,9 +8,9 @@ User = get_user_model()
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        username = env.str("SUPERUSER_LOGIN", "{{superuser_login}}")
-        email = env.str("SUPERUSER_EMAIL", "{{superuser_email}}")
-        password = env.str("SUPERUSER_PASSWORD", "{{superuser_password}}")
+        admin_login = env.str("ADMIN_LOGIN", "{{admin_login}}")
+        admin_email = env.str("ADMIN_EMAIL", "{{admin_email}}")
+        admin_password = env.str("ADMIN_PASSWORD", "{{admin_password}}")
 
-        if all([username, email, password]):
-            User.objects.create_superuser(username, email, password)  # type: ignore[attr-defined]
+        if all([admin_login, admin_email, admin_password]):
+            User.objects.create_superuser(admin_login, admin_email, admin_password)  # type: ignore[attr-defined]
