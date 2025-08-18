@@ -200,5 +200,11 @@ marimo/_lsp/
 __marimo__/
 .DS_Store
 
+# Test folder of the project template
 tests/test_project
+
+# Instructions for Claude
 CLAUDE.md
+
+# Test settings file
+tests/settings.yaml
