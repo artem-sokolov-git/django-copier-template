@@ -1,0 +1,12 @@
+defaults:
+  {%- set needed_keys = [
+    'python_version',
+    'api_framework',
+    'database_type',
+    'linter',
+    'author_name',
+    'author_email',
+    ] %}
+  {%- for key in needed_keys if key in _copier_answers %}
+  {{ key }}: {{ _copier_answers[key] }}
+  {%- endfor %}
