@@ -2,15 +2,14 @@
 
 set -e
 
-rm -rf test_project && uv tool run copier copy .. . \
+rm -rf test_project
+
+COPIER_SETTINGS_PATH="./settings.yaml" uvx copier copy .. . \
     -d project_name=test_project \
-    -d database_type=postgresql \
-    -d api_framework=ninja \
-    -d docker_django_port=8000 \
     --trust \
     --defaults
 
 cd test_project && \
-    make reset && \
+    make rebuild && \
     make migrate && \
-    make logs
+    make admin
