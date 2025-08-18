@@ -1,11 +1,13 @@
 _exclude:
   - "*"
   - "!*/"
+  - "!settings.yaml"
   - ".git"
   - "/tests"
+  - "macros"
 
-_external_data:
-  defaults: defaults.yaml
+_skip_if_exists:
+    - settings.yaml
 
 _message_before_copy: |
   🚀 Welcome to Django Core Template!
@@ -21,8 +23,8 @@ _message_before_copy: |
 
 project_name:
   type: str
-  help: "What is the name of your project?"
-  default: Django Core Project
+  help: "Project name"
+  default: "Django Core Project"
 
 project_slug:
   type: str
@@ -30,81 +32,93 @@ project_slug:
 
 project_version:
   type: str
-  help: "What is the version of your project?"
-  default: "{{ _external_data.defaults.project_version | default('0.1.0') }}"
+  help: "Project version"
+  default: "{{ project_version | default('0.1.0') }}"
 
 project_description:
   type: str
-  help: "What is the description of your project?"
+  help: "Project description"
   default: "This is a basic description of the project '{{ project_name }}'"
 
 python_version:
   type: str
-  help: "What Python version do you want to use?"
-  default: "{{ _external_data.defaults.python_version | default('3.12') }}"
+  help: "Python version"
+  default: "{{ python_version | default('3.12') }}"
 
 author_name:
-  default: "{{ _external_data.defaults.author_name | default('default_author') }}"
-
-author_username:
-  default: "{{ author_name | lower | replace(' ', '') }}"
+  type: str
+  help: "Author name for the project"
+  default: "{{ author_name | default('default_author') }}"
 
 author_email:
-  default: "{{ _external_data.defaults.author_email | default('author@email.com') }}"
+  type: str
+  help: "Author email for the project"
+  default: "{{ author_email | default('author@email.com') }}"
 
 api_framework:
   type: str
-  help: "Which API framework do you want to use?"
+  help: "API framework"
   choices:
     - ninja
     - drf
-  default: "{{ _external_data.defaults.api_framework | default('ninja') }}"
+  default: "{{ api_framework | default('ninja') }}"
 
 linter:
   type: str
-  help: "Which linter do you want to use?"
+  help: "Code linter"
   choices:
     - ruff
     - flake8
-  default: "{{ _external_data.defaults.linter | default('ruff') }}"
+  default: "{{ linter | default('ruff') }}"
 
 database_type:
   type: str
-  help: "Which database do you want to use?"
+  help: "Database type"
   choices:
     - postgresql
     - mysql
-  default: "{{ _external_data.defaults.database.type | default('postgresql') }}"
+  default: "{{ database_type | default('postgresql') }}"
 
-database_login:
+database_name:
   type: str
-  help: "What username will you use for the database?"
-  default: "{{ _external_data.defaults.database.login | default('admin') }}"
+  help: "Database name"
+  default: "{{ project_slug }}_db"
+
+database_user:
+  type: str
+  help: "Database user (author's email address is used by default)"
+  default: "{{ author_email }}"
 
 database_password:
   type: str
-  help: "What password will you use for the database?"
-  default: "{{ _external_data.defaults.database.password | default('admin123') }}"
+  secret: true
+  help: "Database password (automatically generated in .env by default)"
+  default: "{% from 'secrets.jinja' import generate_password %}{{ generate_password(12) }}"
 
-superuser_login:
+admin_login:
   type: str
-  help: "What login will you use to authorize the superuser?"
-  default: "{{ _external_data.defaults.superuser.login | default('admin') }}"
+  help: "Django admin panel login (author's email address is used by default)"
+  default: "{{ author_email }}"
 
-superuser_email:
+admin_email:
   type: str
-  help: "What email will you use to authorize the superuser?"
-  default: "{{ _external_data.defaults.superuser.email | default('admin@email.com') }}"
+  help: "Django admin panel email (author's email address is used by default)"
+  default: "{{ author_email }}"
 
-superuser_password:
-  type: str
-  help: "What password will you use to authorize the superuser?"
-  default: "{{ _external_data.defaults.superuser.password | default('admin123') }}"
+admin_password:
+  secret: true
+  help: "Django admin panel password (automatically generated in .env by default)"
+  default: "{% from 'secrets.jinja' import generate_password %}{{ generate_password(12) }}"
 
 docker_django_port:
   type: str
-  help: "Which port will you use for the web application?"
-  default: 8000
+  help: "Django application port"
+  default: "8000"
+
+secret_key:
+  secret: true
+  help: "Django secret key (automatically generated in .env by default)"
+  default: "{% from 'secrets.jinja' import generate_secret_key %}{{ generate_secret_key() }}"
 
 _message_after_copy: |
     🎉 Your project "{{ project_name }}" has been created successfully!
