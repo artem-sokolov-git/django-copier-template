@@ -7,7 +7,7 @@ PRECOMMIT = uv run pre-commit
 
 .PHONY: up
 up:
-	$(DC) up -d --build --remove-orphans
+	$(DC) up -d --build
 
 .PHONY: down
 down:
@@ -18,12 +18,12 @@ reset: down up
 
 .PHONY: clean-volumes
 clean-volumes:
-	$(DC) down -v
+	$(DC) down -v --remove-orphans
 
 .PHONY: rebuild
 rebuild: clean-volumes
 	$(DC) build --no-cache
-	$(DC) up -d --remove-orphans
+	$(DC) up -d
 
 .PHONY: logs
 logs:
