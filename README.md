@@ -63,7 +63,7 @@ The template will prompt you for the following options:
 | `project_name` | Display name of your project | Django Core Project | - |
 | `project_description` | Short description | Auto-generated | - |
 | `python_version` | Python version to use | 3.12 | - |
-| `api_framework` | API framework | ninja | ninja, drf |
+| `api` | API framework | ninja | ninja, drf |
 | `database_type` | Database backend | postgresql | postgresql, mysql |
 | `linter` | Code linter | ruff | ruff, flake8 |
 | `docker_django_port` | Django container port | 8000 | - |

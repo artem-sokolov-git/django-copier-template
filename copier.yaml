@@ -55,13 +55,13 @@ author_email:
   help: "Author email for the project"
   default: "{{ author_email | default('author@email.com') }}"
 
-api_framework:
+api:
   type: str
   help: "API framework"
   choices:
     - ninja
     - drf
-  default: "{{ api_framework | default('ninja') }}"
+  default: "{{ api | default('ninja') }}"
 
 linter:
   type: str
@@ -148,7 +148,7 @@ _tasks:
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
   - command: "git commit -m 'feat: initial project setup
-    - {{ api_framework|title }} API framework
+    - {{ api|title }} API framework
     - {{ database_type|title }} database
     - {{ linter|title }} linting
     - Pre-commit hooks configured'"

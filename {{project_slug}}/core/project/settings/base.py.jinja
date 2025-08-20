@@ -46,7 +46,7 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS: list[str] = [
     # There should be batteries here.
-{%- if api_framework == "drf" %}
+{%- if api == "drf" %}
     "rest_framework",
     "drf_spectacular",
 {%- endif %}
@@ -153,7 +153,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-{%- if api_framework == "drf" %}
+{%- if api == "drf" %}
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",

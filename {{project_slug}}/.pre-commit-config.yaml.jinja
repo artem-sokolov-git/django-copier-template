@@ -47,7 +47,7 @@ repos:
         additional_dependencies: [
           django-environ,
           django-stubs,
-          {%- if api_framework == "drf" %}
+          {%- if api == "drf" %}
           djangorestframework,
           drf_spectacular,
           types-requests,
