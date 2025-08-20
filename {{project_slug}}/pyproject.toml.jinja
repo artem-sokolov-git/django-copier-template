@@ -19,7 +19,7 @@ dependencies = [
     {%- else %}
     "django-ninja>=1.4.3",
     {%- endif %}
-    {%- if database_type == "postgresql" %}
+    {%- if db_type == "postgresql" %}
     "psycopg2-binary>=2.9.10",
     {%- else %}
     "mysqlclient>=2.2.7",

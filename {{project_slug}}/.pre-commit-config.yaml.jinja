@@ -54,7 +54,7 @@ repos:
           {%- else %}
           django-ninja,
           {%- endif %}
-          {%- if database_type == "postgresql" %}
+          {%- if db_type == "postgresql" %}
           psycopg2-binary,
           {%- else %}
           mysqlclient,

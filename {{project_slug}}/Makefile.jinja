@@ -47,7 +47,7 @@ dj-shell:
 
 .PHONY: db-shell
 db-shell:
-{%- if database_type == "postgresql" %}
+{%- if db_type == "postgresql" %}
 	$(DC) exec postgresql psql -U $$POSTGRES_USER -d $$POSTGRES_DB
 {%- else %}
 	$(DC) exec mysql mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE

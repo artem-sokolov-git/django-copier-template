@@ -15,22 +15,22 @@ services:
     networks:
       - network
     depends_on:
-      {%- if database_type == "postgresql" %}
+      {%- if db_type == "postgresql" %}
       postgresql: {%- endif %}
-      {%- if database_type == "mysql" %}
+      {%- if db_type == "mysql" %}
       mysql: {%- endif %}
         condition: service_healthy
 
-  {%- if database_type == "postgresql" %}
+  {%- if db_type == "postgresql" %}
   postgresql:
     image: postgres:17.5
-    container_name: {{database_name}}
+    container_name: {{db_name}}
     volumes:
       - data:/var/lib/postgresql/data
     env_file:
       - .env
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U {{database_user}} -d {{database_name}}"]
+      test: ["CMD-SHELL", "pg_isready -U {{db_user}} -d {{db_name}}"]
       interval: 5s
       timeout: 3s
       retries: 10
@@ -39,10 +39,10 @@ services:
       - network
   {%- endif %}
 
-  {%- if database_type == "mysql" %}
+  {%- if db_type == "mysql" %}
   mysql:
     image: mysql:9.4.0
-    container_name: {{database_name}}
+    container_name: {{db_name}}
     volumes:
       - data:/var/lib/mysql
     env_file:

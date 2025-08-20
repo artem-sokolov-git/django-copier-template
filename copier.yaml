@@ -71,25 +71,25 @@ linter:
     - flake8
   default: "{{ linter | default('ruff') }}"
 
-database_type:
+db_type:
   type: str
   help: "Database type"
   choices:
     - postgresql
     - mysql
-  default: "{{ database_type | default('postgresql') }}"
+  default: "{{ db_type | default('postgresql') }}"
 
-database_name:
+db_name:
   type: str
   help: "Database name"
   default: "{{ project_slug }}_db"
 
-database_user:
+db_user:
   type: str
   help: "Database user (author's email address is used by default)"
   default: "{{ author_email }}"
 
-database_password:
+db_password:
   type: str
   secret: true
   help: "Database password (automatically generated in .env by default)"
@@ -149,7 +149,7 @@ _tasks:
     working_directory: "{{ project_slug }}"
   - command: "git commit -m 'feat: initial project setup
     - {{ api|title }} API framework
-    - {{ database_type|title }} database
+    - {{ db_type|title }} database
     - {{ linter|title }} linting
     - Pre-commit hooks configured'"
     when: "{{ _copier_operation == 'copy' }}"
