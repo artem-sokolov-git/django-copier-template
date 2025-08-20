@@ -135,15 +135,22 @@ _message_after_copy: |
 _tasks:
   - command: "mv {{ project_slug }}/.env.example {{ project_slug }}/.env"
     when: "{{ _copier_operation == 'copy' }}"
-  - command: "git init && git add . && git commit -m '{{ project_name }} initialization commit'"
+  - command: "git init && git add ."
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
   - command: "uv sync --all-extras"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
-  - command: "uv run pre-commit install && uv run pre-commit autoupdate"
+  - command: "uv run pre-commit install --install-hooks && uv run pre-commit autoupdate"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
   - command: "uv run pre-commit run --all-files --show-diff-on-failure"
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+  - command: "git commit -m 'feat: initial project setup
+    - {{ api_framework|title }} API framework
+    - {{ database_type|title }} database
+    - {{ linter|title }} linting
+    - Pre-commit hooks configured'"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"

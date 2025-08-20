@@ -1,3 +1,7 @@
+default_install_hook_types:
+  - pre-commit
+  - commit-msg
+
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
@@ -9,6 +13,12 @@ repos:
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: debug-statements
+
+  - repo: https://github.com/compilerla/conventional-pre-commit
+    rev: v4.2.0
+    hooks:
+      - id: conventional-pre-commit
+        stages: [commit-msg]
 
   {%- if linter == "ruff" %}
   - repo: https://github.com/astral-sh/ruff-pre-commit
