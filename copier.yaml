@@ -17,7 +17,7 @@ _message_before_copy: |
   • Choice of API framework (Django Ninja or DRF)
   • Database setup (PostgreSQL or MySQL)
   • Ready-to-use Docker configuration
-  • Development tools (linters, pre-commit hooks)
+  • Development tools (ruff, pre-commit hooks)
 
   Answer a few questions and we'll create a development-ready project for you!
 
@@ -62,14 +62,6 @@ api:
     - ninja
     - drf
   default: "{{ api | default('ninja') }}"
-
-linter:
-  type: str
-  help: "Code linter"
-  choices:
-    - ruff
-    - flake8
-  default: "{{ linter | default('ruff') }}"
 
 db_type:
   type: str
@@ -150,7 +142,6 @@ _tasks:
   - command: "git commit -m 'feat: initial project setup
     - {{ api|title }} API framework
     - {{ db_type|title }} database
-    - {{ linter|title }} linting
     - Pre-commit hooks configured'"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"

@@ -16,9 +16,10 @@ services:
       - network
     depends_on:
       {%- if db_type == "postgresql" %}
-      postgresql: {%- endif %}
-      {%- if db_type == "mysql" %}
-      mysql: {%- endif %}
+      postgresql:
+      {%- elif db_type == "mysql" %}
+      mysql:
+      {%- endif %}
         condition: service_healthy
 
   {%- if db_type == "postgresql" %}
@@ -37,9 +38,8 @@ services:
     restart: unless-stopped
     networks:
       - network
-  {%- endif %}
 
-  {%- if db_type == "mysql" %}
+  {%- elif db_type == "mysql" %}
   mysql:
     image: mysql:9.4.0
     container_name: {{db_name}}

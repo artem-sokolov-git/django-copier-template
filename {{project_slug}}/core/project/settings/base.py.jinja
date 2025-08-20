@@ -100,14 +100,15 @@ DATABASES = {
         "USER": env.str("POSTGRES_USER", "{{db_user}}"),
         "PASSWORD": env.str("POSTGRES_PASSWORD", None),
         "HOST": "postgresql",
-        "PORT": 5432, {%- endif %}
-        {%- if db_type == "mysql" %}
+        "PORT": 5432,
+        {%- elif db_type == "mysql" %}
         "ENGINE": "django.db.backends.mysql",
         "NAME": env.str("MYSQL_DATABASE", "{{db_name}}"),
         "USER": env.str("MYSQL_USER", "{{db_user}}"),
         "PASSWORD": env.str("MYSQL_PASSWORD", None),
         "HOST": "mysql",
-        "PORT": 3306, {%- endif %}
+        "PORT": 3306,
+        {%- endif %}
     }
 }
 

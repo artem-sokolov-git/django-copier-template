@@ -16,12 +16,12 @@ dependencies = [
     {%- if api == "drf" %}
     "djangorestframework>=3.16.0",
     "drf-spectacular>=0.27.2",
-    {%- else %}
+    {%- elif api == "ninja" %}
     "django-ninja>=1.4.3",
     {%- endif %}
     {%- if db_type == "postgresql" %}
     "psycopg2-binary>=2.9.10",
-    {%- else %}
+    {%- elif db_type == "mysql" %}
     "mysqlclient>=2.2.7",
     {%- endif %}
 ]
@@ -32,13 +32,36 @@ dev = [
     "mypy>=1.16.1",
     "django-stubs>=5.1.0",
     "pytest>=8.4.1",
-    {%- if linter == "ruff" %}
     "ruff>=0.12.0",
-    {%- else %}
-    "isort>=6.0.1",
-    "flake8>=7.3.0",
-    {%- endif %}
 ]
+
+# =============================================================================
+# LINTING CONFIGURATION
+# =============================================================================
+
+[tool.ruff]
+target-version = "py{{ python_version | replace('.', '') }}"
+line-length = 92
+
+[tool.ruff.lint]
+select = [
+    "E",  # pycodestyle errors
+    "W",  # pycodestyle warnings
+    "F",  # pyflakes
+    "I",  # isort
+    "B",  # flake8-bugbear
+    "C4", # flake8-comprehensions
+    "UP", # pyupgrade
+    "S",  # bandit
+]
+ignore = [
+    "S101", # Use of assert detected
+    "S601", # shell=True detected
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["S101"]
+"*/migrations/*" = ["E501"]
 
 # =============================================================================
 # MYPY CONFIGURATION
@@ -79,48 +102,3 @@ django_settings_module = "core.project.settings"
 [tool.pytest.ini_options]
 testpaths = ["**/tests"]
 python_files = ["test_*.py", "test_*.py.jinja"]
-
-# =============================================================================
-# LINTING CONFIGURATION
-# =============================================================================
-
-{%- if linter == "ruff" %}
-
-[tool.ruff]
-target-version = "py{{ python_version | replace('.', '') }}"
-line-length = 92
-
-[tool.ruff.lint]
-select = [
-    "E",  # pycodestyle errors
-    "W",  # pycodestyle warnings
-    "F",  # pyflakes
-    "I",  # isort
-    "B",  # flake8-bugbear
-    "C4", # flake8-comprehensions
-    "UP", # pyupgrade
-    "S",  # bandit
-]
-ignore = [
-    "S101", # Use of assert detected
-    "S601", # shell=True detected
-]
-
-[tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
-"*/migrations/*" = ["E501"]
-{%- else %}
-
-[tool.flake8]
-max-line-length = 92
-exclude = [".git", "__pycache__", "*/migrations/*", ".venv", "venv"]
-ignore = ["E203", "E266", "W503"]
-per-file-ignores = [
-    "tests/*:S101",
-    "*/migrations/*:E501"
-]
-
-[tool.isort]
-profile = "black"
-line_length = 92
-{%- endif %}
