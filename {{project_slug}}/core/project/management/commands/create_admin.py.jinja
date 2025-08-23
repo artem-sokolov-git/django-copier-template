@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.core.management.base import BaseCommand
 
-from core.project.settings.base import env
+from core.project.settings import env
 
 User = get_user_model()
 
@@ -13,4 +13,4 @@ class Command(BaseCommand):
         admin_password = env.str("ADMIN_PASSWORD", "{{admin_password}}")
 
         if all([admin_login, admin_email, admin_password]):
-            User.objects.create_superuser(admin_login, admin_email, admin_password)  # type: ignore[attr-defined]
+            User.objects.create_superuser(admin_login, admin_email, admin_password)
