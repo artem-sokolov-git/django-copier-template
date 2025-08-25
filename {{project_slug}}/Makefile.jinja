@@ -53,6 +53,11 @@ db-shell:
 	$(DC) exec mysql mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
 {%- endif %}
 
+.PHONY: %_app
+%_app:
+	$(DC) exec web mkdir -p core/apps/$*
+	$(DC) exec web $(MANAGE) startapp $* core/apps/$*
+
 .PHONY: pre-commit-check
 pre-commit-check:
 	$(PRECOMMIT) run --all-files --show-diff-on-failure
