@@ -44,7 +44,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 **Fork this repository on GitHub**, then use your own copy for creating projects:
 
 ```bash
-uvx copier copy https://github.com/your-username/django-copier-template .
+uvx copier copy https://github.com/your-username/django-copier-template . --trust
 ```
 
 The `.` (dot) means "current directory" - this way you first create and navigate to your desired project folder, then generate the template files directly there instead of creating a nested subdirectory.
