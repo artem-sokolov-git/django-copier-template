@@ -1,15 +1,11 @@
 _exclude:
   - "*"
   - "!*/"
-  - "!settings.yaml"
   - ".git"
   - "/tests"
-  - "macros"
-
-_skip_if_exists:
-    - settings.yaml
 
 _message_before_copy: |
+
   🚀 Welcome to Django Core Template!
 
   This template helps you quickly create a modern Django project with:
@@ -113,6 +109,7 @@ secret_key:
   default: "{% from 'secrets.jinja' import generate_secret_key %}{{ generate_secret_key() }}"
 
 _message_after_copy: |
+
     🎉 Your project "{{ project_name }}" has been created successfully!
 
     Next steps:
@@ -125,20 +122,30 @@ _message_after_copy: |
     Happy coding! 🚀
 
 _tasks:
-  - command: "mv {{ project_slug }}/.env.example {{ project_slug }}/.env"
+  - command: "mv .env.example .env"
     when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+
   - command: "git init && git add ."
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
+
   - command: "uv sync --all-extras"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
-  - command: "uv run pre-commit install --install-hooks && uv run pre-commit autoupdate"
+
+  - command: "uv run pre-commit install --install-hooks"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
+
+  - command: "uv run pre-commit autoupdate"
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+
   - command: "uv run pre-commit run --all-files --show-diff-on-failure"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
+
   - command: "git commit -m 'feat: initial project setup
     - {{ api|title }} API framework
     - {{ db_type|title }} database
