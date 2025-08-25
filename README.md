@@ -17,7 +17,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 ### 🛠️ Development Tools
 - **uv** - Fast Python package manager
 - **pre-commit** - Git hooks for code quality
-- **Linting**: Ruff or Flake8 (configurable)
+- **Linting**: Ruff
 - **Type Checking**: mypy integration
 - **Testing**: pytest with coverage
 
@@ -39,20 +39,15 @@ A modern Copier template for Django projects with production-ready tooling and b
 - Python 3.12+
 - [uv](https://docs.astral.sh/uv/) (recommended) or [copier](https://copier.readthedocs.io/)
 
-### Using uvx (Recommended)
+### **You must fork this repository first**
+
+**Fork this repository on GitHub**, then use your own copy for creating projects:
 
 ```bash
-uvx copier copy https://github.com/your-username/django-copier-template your-project-name
-cd your-project-name
+uvx copier copy https://github.com/your-username/django-copier-template .
 ```
 
-### Using copier directly
-
-```bash
-pip install copier
-copier copy https://github.com/your-username/django-copier-template your-project-name
-cd your-project-name
-```
+The `.` (dot) means "current directory" - this way you first create and navigate to your desired project folder, then generate the template files directly there instead of creating a nested subdirectory.
 
 ## ⚙️ Template Configuration
 
@@ -73,18 +68,22 @@ After generation, your project includes a Makefile with common commands:
 
 ### Docker Commands
 ```bash
-make up          # Start development containers
-make down        # Stop containers
-make rebuild     # Full rebuild with cache clearing
-make logs        # View container logs
+make up             # Start development containers
+make down           # Stop containers
+make reset          # Restart containers
+make rebuild        # Full rebuild with cache clearing
+make clean-volumes  # Stop containers and remove volumes
+make logs           # View container logs
 ```
 
 ### Django Commands
 ```bash
-make migrate     # Apply database migrations
-make migrations  # Create new migrations
-make admin       # Create superuser
-make dj-shell    # Enhanced Django shell
+make migrate        # Apply database migrations
+make migrations     # Create new migrations
+make admin          # Create superuser
+make dj-shell       # Enhanced Django shell
+make db-shell       # Connect to database shell
+make app_name_app   # Create Django app (e.g., make users_app creates core/apps/users)
 ```
 
 ### Development Commands
@@ -118,6 +117,12 @@ your-project/
 ## 🤝 Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
+
+Forking this repository gives you:
+- Full control over the template
+- Ability to customize for your specific needs
+- Stable version without unexpected changes
+- Freedom to make your own improvements
 
 ## 📄 License
 
