@@ -2,8 +2,7 @@ include .env
 export
 
 DC = docker compose
-MANAGE = uv run python manage.py
-PRECOMMIT = uv run pre-commit
+MANAGE = python manage.py
 
 .PHONY: up
 up:
@@ -60,4 +59,4 @@ db-shell:
 
 .PHONY: pre-commit-check
 pre-commit-check:
-	$(PRECOMMIT) run --all-files --show-diff-on-failure
+	pre-commit run --all-files --show-diff-on-failure

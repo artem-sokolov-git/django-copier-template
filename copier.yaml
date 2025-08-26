@@ -39,7 +39,7 @@ project_description:
 python_version:
   type: str
   help: "Python version"
-  default: "{{ python_version | default('3.12') }}"
+  default: "{{ python_version | default('3.12.11') }}"
 
 author_name:
   type: str
