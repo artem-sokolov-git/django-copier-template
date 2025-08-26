@@ -1,7 +1,7 @@
 # Django Copier Template
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Python](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/)
+[![Python](https://img.shields.io/badge/python-3.12.11+-blue.svg)](https://www.python.org/downloads/)
 [![Copier](https://img.shields.io/badge/template-copier-blue.svg)](https://copier.readthedocs.io/)
 
 A modern Copier template for Django projects with production-ready tooling and best practices.
@@ -12,7 +12,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 - **Django** with environment-based configuration
 - **API Framework Choice**: Django Ninja or Django REST Framework
 - **Database Support**: PostgreSQL or MySQL
-- **Python 3.12+** with modern syntax support
+- **Python 3.12.11+** with modern syntax support
 
 ### 🛠️ Development Tools
 - **uv** - Fast Python package manager
@@ -22,10 +22,11 @@ A modern Copier template for Django projects with production-ready tooling and b
 - **Testing**: pytest with coverage
 
 ### 🐳 Production Ready
-- **Docker** configuration with multi-stage builds
+- **Docker** configuration with optimized multi-stage builds
 - **Environment Variables** management with django-environ
 - **Settings Split**: Base configuration with environment overrides
 - **Custom Management Commands** for enhanced development workflow
+- **Security**: Auto-generated secure credentials and secret keys
 
 ### 📁 Project Structure
 - **Modular Apps**: Clean separation with `core/apps/` structure
@@ -36,7 +37,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 
 ### Prerequisites
 
-- Python 3.12+
+- Python 3.12.11+
 - [uv](https://docs.astral.sh/uv/) (recommended) or [copier](https://copier.readthedocs.io/)
 
 ### **You must fork this repository first**
@@ -57,7 +58,7 @@ The template will prompt you for the following options:
 |--------|-------------|---------|---------|
 | `project_name` | Display name of your project | Django Core Project | - |
 | `project_description` | Short description | Auto-generated | - |
-| `python_version` | Python version to use | 3.12 | - |
+| `python_version` | Python version to use | 3.12.11 | - |
 | `api` | API framework | ninja | ninja, drf |
 | `db_type` | Database backend | postgresql | postgresql, mysql |
 | `docker_django_port` | Django container port | 8000 | - |
@@ -89,9 +90,9 @@ make app_name_app   # Create Django app (e.g., make users_app creates core/apps/
 ### Development Commands
 ```bash
 make pre-commit-check  # Run pre-commit hooks
-uv run ruff check      # Lint code
-uv run mypy .          # Type checking
-uv run pytest         # Run tests
+ruff check             # Lint code (or flake8 if selected)
+mypy .                 # Type checking
+pytest                 # Run tests
 ```
 
 ## 📂 Generated Structure
@@ -109,7 +110,7 @@ your-project/
 │           └── v1/             # Versioned API endpoints
 ├── tests/                      # Test suite
 ├── docker-compose.yml          # Development containers
-├── Dockerfile                  # Production-ready image
+├── Dockerfile                  # Optimized multi-stage production image
 ├── Makefile                    # Development shortcuts
 └── pyproject.toml              # Python project configuration
 ```
