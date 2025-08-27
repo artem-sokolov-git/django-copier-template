@@ -54,8 +54,8 @@ db-shell:
 
 .PHONY: %_app
 %_app:
-	$(DC) exec web mkdir -p core/apps/$*
-	$(DC) exec web $(MANAGE) startapp $* core/apps/$*
+	$(DC) exec web $(MANAGE) create_app $*
+
 
 .PHONY: pre-commit-check
 pre-commit-check:
