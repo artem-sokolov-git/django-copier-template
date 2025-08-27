@@ -32,6 +32,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 - **Modular Apps**: Clean separation with `core/apps/` structure
 - **API Versioning**: Built-in v1 API structure
 - **Custom Shell**: Enhanced Django shell with auto-imports
+- **Smart App Creation**: Automatic app creation with settings integration
 
 ## 🚀 Quick Start
 
@@ -69,30 +70,32 @@ After generation, your project includes a Makefile with common commands:
 
 ### Docker Commands
 ```bash
-make up             # Start development containers
-make down           # Stop containers
-make reset          # Restart containers
-make rebuild        # Full rebuild with cache clearing
-make clean-volumes  # Stop containers and remove volumes
-make logs           # View container logs
+make up               # Start development containers
+make down             # Stop containers
+make reset            # Restart containers
+make rebuild          # Full rebuild with cache clearing
+make clean_volumes    # Stop containers and remove volumes
+make logs             # View container logs
 ```
 
 ### Django Commands
 ```bash
-make migrate        # Apply database migrations
-make migrations     # Create new migrations
-make admin          # Create superuser
-make dj-shell       # Enhanced Django shell
-make db-shell       # Connect to database shell
-make app_name_app   # Create Django app (e.g., make users_app creates core/apps/users)
+make migrate          # Apply database migrations
+make migrations       # Create new migrations
+make admin            # Create superuser (uses auto-generated credentials)
+make dj_shell         # Enhanced Django shell with auto-imports
+make db_shell         # Connect to database shell
+make app_name_app     # Create Django app with automatic settings integration
+                      # Example: make users_app creates core/apps/users/
+                      # and adds "core.apps.users" to LOCAL_APPS
 ```
 
 ### Development Commands
 ```bash
-make pre-commit-check  # Run pre-commit hooks
-ruff check             # Lint code (or flake8 if selected)
-mypy .                 # Type checking
-pytest                 # Run tests
+make pre_commit_check # Run pre-commit hooks
+uv run ruff check     # Lint code
+uv run mypy .         # Type checking
+uv run pytest        # Run tests
 ```
 
 ## 📂 Generated Structure
@@ -100,19 +103,35 @@ pytest                 # Run tests
 ```
 your-project/
 ├── core/
-│   ├── project/                 # Django settings and config
+│   ├── project/                 # Django settings and configuration
 │   │   ├── settings/
-│   │   │   └── base.py         # Environment-based settings
-│   │   └── management/
-│   │       └── commands/       # Custom management commands
-│   └── apps/
-│       └── api/                # API application
-│           └── v1/             # Versioned API endpoints
-├── tests/                      # Test suite
-├── docker-compose.yml          # Development containers
-├── Dockerfile                  # Optimized multi-stage production image
-├── Makefile                    # Development shortcuts
-└── pyproject.toml              # Python project configuration
+│   │   │   ├── __init__.py
+│   │   │   ├── base.py          # Environment-based settings with LOCAL_APPS
+│   │   │   ├── development.py   # Development-specific settings
+│   │   │   └── production.py    # Production-specific settings
+│   │   ├── management/
+│   │   │   └── commands/        # Custom management commands
+│   │   │       ├── create_admin.py    # Auto-create superuser
+│   │   │       ├── create_app.py      # Smart app creation with settings integration
+│   │   │       └── shell.py           # Enhanced Django shell
+│   │   ├── urls.py              # Main URL configuration
+│   │   ├── wsgi.py              # WSGI application
+│   │   └── asgi.py              # ASGI application
+│   └── apps/                    # Application modules
+│       ├── api/                 # API application (Django Ninja or DRF)
+│       │   ├── v1/              # Versioned API endpoints
+│       │   │   └── urls.py      # API v1 routes
+│       │   ├── schemas.py       # API schemas (if Django Ninja)
+│       │   └── urls.py          # API URL configuration
+│       └── [your_apps]/         # Apps created with `make app_name_app`
+├── .env                         # Environment variables (auto-generated)
+├── docker-compose.yml           # Development containers configuration
+├── Dockerfile                   # Optimized multi-stage production build
+├── Makefile                     # Development command shortcuts
+├── manage.py                    # Django management script
+├── pyproject.toml              # Python project and dependency configuration
+├── .pre-commit-config.yaml     # Pre-commit hooks configuration
+└── .gitignore                  # Git ignore patterns
 ```
 
 ## 🤝 Contributing
