@@ -45,24 +45,22 @@ A modern Copier template for Django projects with production-ready tooling and b
 ### Step-by-Step Setup
 
 1. **Fork this repository** on GitHub for full customization control
-2. **Create your project directory**:
-   ```bash
-   mkdir my-django-project
-   cd my-django-project
-   ```
-3. **Generate the project** using your fork:
+2. **Generate the project** using your fork:
    ```bash
    uvx copier copy https://github.com/your-username/django-copier-template . --trust
    ```
-4. **Answer the configuration questions** (or use `--defaults` for quick setup)
-5. **Start development** immediately:
+3. **Answer the configuration questions** (project directory will be created automatically based on project name)
+4. **Navigate to your project** and customize environment:
    ```bash
-   make up      # Start containers
-   make migrate # Setup database
+   cd your-project-slug  # Directory name based on your project_name answer
+   # Optional: Edit .env file to customize credentials and settings
+   nano .env
+   ```
+5. **Start development**:
+   ```bash
+   make build            # Full build: containers + migrations + admin user
    # Your project is ready at http://localhost:8000
    ```
-
-The `.` (dot) means "current directory" - this way you first create and navigate to your desired project folder, then generate the template files directly there instead of creating a nested subdirectory.
 
 ### ⚡ Post-Generation Setup
 
@@ -144,12 +142,12 @@ your-project/
 │   │   ├── urls.py              # Main URL configuration
 │   │   ├── wsgi.py              # WSGI application
 │   │   └── asgi.py              # ASGI application
+│   ├── api/                     # API application (Django Ninja or DRF)
+│   │   ├── v1/                  # Versioned API endpoints
+│   │   │   └── urls.py          # API v1 routes
+│   │   ├── schemas.py           # API schemas (if Django Ninja)
+│   │   └── urls.py              # API URL configuration
 │   └── apps/                    # Application modules
-│       ├── api/                 # API application (Django Ninja or DRF)
-│       │   ├── v1/              # Versioned API endpoints
-│       │   │   └── urls.py      # API v1 routes
-│       │   ├── schemas.py       # API schemas (if Django Ninja)
-│       │   └── urls.py          # API URL configuration
 │       └── [your_apps]/         # Apps created with `make app_name_app`
 ├── .env                         # Environment variables (auto-generated)
 ├── docker-compose.yml           # Development containers configuration
