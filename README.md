@@ -38,18 +38,44 @@ A modern Copier template for Django projects with production-ready tooling and b
 
 ### Prerequisites
 
-- Python 3.12.11+
-- [uv](https://docs.astral.sh/uv/) (recommended) or [copier](https://copier.readthedocs.io/)
+- **Python 3.12.11+** - Required for modern Django features
+- **[uv](https://docs.astral.sh/uv/)** - Recommended for fastest package management
+- Alternative: **[copier](https://copier.readthedocs.io/)** - If you prefer traditional pip/pipx
 
-### **You must fork this repository first**
+### Step-by-Step Setup
 
-**Fork this repository on GitHub**, then use your own copy for creating projects:
-
-```bash
-uvx copier copy https://github.com/your-username/django-copier-template . --trust
-```
+1. **Fork this repository** on GitHub for full customization control
+2. **Create your project directory**:
+   ```bash
+   mkdir my-django-project
+   cd my-django-project
+   ```
+3. **Generate the project** using your fork:
+   ```bash
+   uvx copier copy https://github.com/your-username/django-copier-template . --trust
+   ```
+4. **Answer the configuration questions** (or use `--defaults` for quick setup)
+5. **Start development** immediately:
+   ```bash
+   make up      # Start containers
+   make migrate # Setup database
+   # Your project is ready at http://localhost:8000
+   ```
 
 The `.` (dot) means "current directory" - this way you first create and navigate to your desired project folder, then generate the template files directly there instead of creating a nested subdirectory.
+
+### ⚡ Post-Generation Setup
+
+After running the copier command, the template automatically:
+
+1. **Creates environment file** - Renames `.env.example` to `.env` with auto-generated secure credentials
+2. **Initializes git** - Sets up git repository with initial commit
+3. **Installs dependencies** - Runs `uv sync --all-extras` to install all packages
+4. **Configures pre-commit** - Installs and updates pre-commit hooks
+5. **Runs quality checks** - Initial code validation with all configured tools
+6. **Creates initial commit** - Commits the configured project with descriptive message
+
+**Ready to code immediately** - No additional setup required!
 
 ## ⚙️ Template Configuration
 
@@ -92,7 +118,8 @@ make app_name_app     # Create Django app with automatic settings integration
 
 ### Development Commands
 ```bash
-make pre_commit_check # Run pre-commit hooks
+make check            # Run pre-commit code checks
+make build            # Full build: up + migrations + migrate + admin
 uv run ruff check     # Lint code
 uv run mypy .         # Type checking
 uv run pytest        # Run tests
@@ -132,6 +159,31 @@ your-project/
 ├── pyproject.toml              # Python project and dependency configuration
 ├── .pre-commit-config.yaml     # Pre-commit hooks configuration
 └── .gitignore                  # Git ignore patterns
+```
+
+## 🔐 Security Features
+
+The template prioritizes security with automatic credential generation:
+
+### Auto-Generated Credentials
+- **Django Secret Key** - Cryptographically secure 50-character key with special symbols
+- **Database Password** - 12-character alphanumeric password
+- **Admin Password** - 12-character alphanumeric password for superuser account
+- **All credentials** automatically populated in `.env` file during generation
+
+### Security Best Practices
+- **No hardcoded secrets** in template or generated code
+- **Environment variables** for all sensitive configuration
+- **Secure random generation** using Python's `secrets` module
+- **Docker security** with non-root containers and minimal attack surface
+- **Pre-commit hooks** prevent committing sensitive data
+
+### Generated Credentials Location
+After project generation, check your `.env` file for:
+```bash
+SECRET_KEY=your-auto-generated-secret-key
+POSTGRES_PASSWORD=your-auto-generated-db-password
+DJANGO_ADMIN_PASSWORD=your-auto-generated-admin-password
 ```
 
 ## 🤝 Contributing

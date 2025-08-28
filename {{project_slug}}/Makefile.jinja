@@ -4,59 +4,138 @@ export
 DC = docker compose
 MANAGE = python manage.py
 
+# Colors
+GREEN = \033[0;32m
+YELLOW = \033[1;33m
+BLUE = \033[0;34m
+RED = \033[0;31m
+NC = \033[0m
+
+# =============================================================================
+# MAIN COMMANDS
+# =============================================================================
+
 .PHONY: up
-up:
-	$(DC) up -d --build
+up: ## Start containers
+	@echo "$(YELLOW)Starting containers...$(NC)"
+	@$(DC) up -d --build
+	@echo "$(GREEN)Containers started!$(NC)"
 
 .PHONY: down
-down:
-	$(DC) down
-
-.PHONY: reset
-reset: down up
+down: ## Stop containers
+	@echo "$(YELLOW)Stopping containers...$(NC)"
+	@$(DC) down
+	@echo "$(GREEN)Containers stopped!$(NC)"
 
 .PHONY: clean_volumes
-clean_volumes:
-	$(DC) down -v --remove-orphans
+clean_volumes: ## Clean volumes and orphans
+	@echo "$(RED)Cleaning volumes...$(NC)"
+	@$(DC) down -v --remove-orphans
+	@echo "$(GREEN)Volumes cleaned!$(NC)"
 
-.PHONY: rebuild
-rebuild: clean_volumes
-	$(DC) build --no-cache
-	$(DC) up -d
+.PHONY: reset
+reset: ## Restart containers (down + up)
+	@echo "$(YELLOW)Restarting containers...$(NC)"
+	@$(MAKE) down
+	@$(MAKE) up
+	@echo "$(GREEN)Containers restarted!$(NC)"
 
-.PHONY: logs
-logs:
-	$(DC) logs -f
+# =============================================================================
+# DATABASE
+# =============================================================================
 
 .PHONY: migrate
-migrate:
-	$(DC) exec web $(MANAGE) migrate
+migrate: ## Apply Django migrations
+	@echo "$(YELLOW)Applying migrations...$(NC)"
+	@$(DC) exec web $(MANAGE) migrate
+	@echo "$(GREEN)Migrations applied!$(NC)"
 
 .PHONY: migrations
-migrations:
-	$(DC) exec web $(MANAGE) makemigrations
+migrations: ## Create new Django migrations
+	@echo "$(YELLOW)Creating migrations...$(NC)"
+	@$(DC) exec web $(MANAGE) makemigrations
+	@echo "$(GREEN)Migrations created!$(NC)"
 
 .PHONY: admin
-admin:
-	$(DC) exec web $(MANAGE) create_admin
-
-.PHONY: dj_shell
-dj_shell:
-	$(DC) exec web $(MANAGE) shell
-
-.PHONY: db_shell
-db_shell:
-{%- if db_type == "postgresql" %}
-	$(DC) exec postgresql psql -U $$POSTGRES_USER -d $$POSTGRES_DB
-{%- elif db_type == "mysql" %}
-	$(DC) exec mysql mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
-{%- endif %}
+admin: ## Create Django admin user
+	@echo "$(YELLOW)Creating admin user...$(NC)"
+	@$(DC) exec web $(MANAGE) create_admin
+	@echo "$(GREEN)Admin user created!$(NC)"
 
 .PHONY: %_app
-%_app:
-	$(DC) exec web $(MANAGE) create_app $*
+%_app: ## Create new Django app (make myapp_app)
+	@echo "$(YELLOW)Creating app: $*$(NC)"
+	@$(DC) exec web $(MANAGE) create_app $*
+	@echo "$(GREEN)App $* created!$(NC)"
 
+# =============================================================================
+# BUILD
+# =============================================================================
 
-.PHONY: pre_commit_check
-pre_commit_check:
-	pre-commit run --all-files --show-diff-on-failure
+.PHONY: build
+build: ## Full build (up + migrations + migrate + admin)
+	@echo "$(BLUE)Full project build...$(NC)"
+	@$(MAKE) up
+	@$(MAKE) migrations
+	@$(MAKE) migrate
+	@$(MAKE) admin
+	@echo "$(GREEN)Project ready!$(NC)"
+
+.PHONY: rebuild
+rebuild: ## Rebuild with volume cleanup
+	@echo "$(BLUE)Rebuilding with cleanup...$(NC)"
+	@$(MAKE) clean_volumes
+	@$(MAKE) up
+	@$(MAKE) migrations
+	@$(MAKE) migrate
+	@$(MAKE) admin
+	@echo "$(GREEN)Project rebuilt!$(NC)"
+
+# =============================================================================
+# TOOLS
+# =============================================================================
+
+.PHONY: logs
+logs: ## Show container logs (follow mode)
+	@$(DC) logs -f
+
+.PHONY: dj_shell
+dj_shell: ## Run Django shell
+	@$(DC) exec web $(MANAGE) shell
+
+.PHONY: db_shell
+db_shell: ## Connect to PostgreSQL shell
+	{%- if db_type == "postgresql" %}
+	$(DC) exec postgresql psql -U $$POSTGRES_USER -d $$POSTGRES_DB
+	{%- elif db_type == "mysql" %}
+	$(DC) exec mysql mysql -u $$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE
+	{%- endif %}
+
+.PHONY: check
+check: ## Run pre-commit code checks
+	@echo "$(YELLOW)Running code checks...$(NC)"
+	@uv run pre-commit run --all-files
+	@echo "$(GREEN)Checks completed!$(NC)"
+
+.PHONY: clean
+clean: ## Clean unused Docker resources
+	@echo "$(RED)Cleaning Docker...$(NC)"
+	@docker system prune -f
+	@echo "$(GREEN)Docker cleaned!$(NC)"
+
+# =============================================================================
+# AUTO-GENERATED HELP
+# =============================================================================
+
+.PHONY: help
+help: ## Show this help menu
+	@echo ""
+	@echo "$(BLUE){{ project_name }}$(NC)"
+	@echo ""
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  $(GREEN)%-15s$(NC) %s\n", $$1, $$2}' $(MAKEFILE_LIST)
+	@echo ""
+
+# =============================================================================
+# DEFAULT
+# =============================================================================
+.DEFAULT_GOAL := help
