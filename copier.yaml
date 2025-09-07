@@ -142,10 +142,6 @@ _tasks:
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
 
-  - command: "uv run pre-commit run --all-files --show-diff-on-failure"
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
   - command: "git commit -m 'feat: initial project setup
     - {{ api|title }} API framework
     - {{ db_type|title }} database

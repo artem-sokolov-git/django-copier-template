@@ -31,8 +31,13 @@ dev = [
     "pre-commit>=4.2.0",
     "mypy>=1.16.1",
     "django-stubs>=5.1.0",
+    {%- if api == "drf" %}
+    "djangorestframework-stubs>=3.16.0",
+    {%- endif %}
     "pytest>=8.4.1",
+    "pytest-django>=4.11.1",
     "ruff>=0.12.0",
+    "requests>=2.32.5",
 ]
 
 # =============================================================================
@@ -124,3 +129,4 @@ django_settings_module = "core.project.settings"
 [tool.pytest.ini_options]
 testpaths = ["**/tests"]
 python_files = ["test_*.py", "test_*.py.jinja"]
+DJANGO_SETTINGS_MODULE = "core.project.settings"

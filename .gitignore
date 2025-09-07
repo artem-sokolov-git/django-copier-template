@@ -205,6 +205,3 @@ tests/test_project
 
 # Instructions for Claude
 CLAUDE.md
-
-# Test settings file
-tests/settings.yaml
