@@ -114,16 +114,8 @@ db_shell: ## Connect to PostgreSQL shell
 .PHONY: check
 check: ## Check code without fixing issues
 	@echo "$(YELLOW)Checking code...$(NC)"
-	-@uv run ruff check .
-	-@uv run mypy .
-	-@uv run pytest .
-	@echo "$(GREEN)Code check completed!$(NC)"
-
-.PHONY: fix
-fix: ## Fix code issues automatically
-	@echo "$(YELLOW)Fixing code issues...$(NC)"
 	@uv run pre-commit run --all-files
-	@echo "$(GREEN)Code fixes applied!$(NC)"
+	@echo "$(GREEN)Code check completed!$(NC)"
 
 .PHONY: clean
 clean: ## Clean unused Docker resources

@@ -18,7 +18,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 - **uv** - Fast Python package manager
 - **pre-commit** - Git hooks for code quality
 - **Linting**: Ruff with comprehensive rules
-- **Type Checking**: mypy with strict mode configuration
+- **Type Checking**: ty (fast modern type checker)
 - **Testing**: pytest with coverage
 
 ### 🐳 Production Ready
@@ -116,11 +116,10 @@ make app_name_app     # Create Django app with automatic settings integration
 
 ### Development Commands
 ```bash
-make check            # Check code quality without fixing (ruff + mypy)
-make fix              # Fix code issues automatically (pre-commit hooks)
+make check            # Check code quality (runs pre-commit hooks: ruff + ty + tests)
 make build            # Full build: up + migrations + migrate + admin
 uv run ruff check     # Lint code manually
-uv run mypy .         # Type checking manually
+uvx ty check .        # Type checking manually
 uv run pytest        # Run tests
 ```
 

@@ -142,6 +142,10 @@ _tasks:
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
 
+  - command: "git add ."
+    when: "{{ _copier_operation == 'copy' }}"
+    working_directory: "{{ project_slug }}"
+
   - command: "git commit -m 'feat: initial project setup
     - {{ api|title }} API framework
     - {{ db_type|title }} database

@@ -29,14 +29,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pre-commit>=4.2.0",
-    "mypy>=1.16.1",
-    "django-stubs>=5.1.0",
     {%- if api == "drf" %}
     "djangorestframework-stubs>=3.16.0",
     {%- endif %}
     "pytest>=8.4.1",
     "pytest-django>=4.11.1",
-    "ruff>=0.12.0",
     "requests>=2.32.5",
 ]
 
@@ -48,6 +45,13 @@ dev = [
 target-version = "py{{ python_version.split('.')[0] + python_version.split('.')[1] }}"
 line-length = 92
 
+exclude = [
+    "*/migrations/*",
+    "*/staticfiles/*",
+    "*/media/*",
+    "*/locale/*",
+]
+
 [tool.ruff.lint]
 select = [
     "E",  # pycodestyle errors
@@ -58,6 +62,8 @@ select = [
     "C4", # flake8-comprehensions
     "UP", # pyupgrade
     "S",  # bandit
+    "T20",  # flake8-print (print())
+    "T10",  # flake8-debugger (pdb)
 ]
 ignore = [
     "S101", # Use of assert detected
@@ -65,62 +71,8 @@ ignore = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"tests/*" = ["S101"]
-"*/migrations/*" = ["E501"]
 # Django settings use star imports and dynamic attributes by convention
 "core/project/settings/*" = ["F405", "F403"]
-
-# =============================================================================
-# MYPY CONFIGURATION
-# =============================================================================
-# Strict mode configuration based on https://habr.com/ru/articles/465007/
-
-[tool.mypy]
-python_version = "{{ python_version.split('.')[0] }}.{{ python_version.split('.')[1] }}"
-check_untyped_defs = true
-disallow_any_generics = true
-disallow_untyped_calls = true
-disallow_untyped_decorators = true
-ignore_errors = false
-ignore_missing_imports = true
-no_implicit_reexport = true
-strict_optional = true
-strict_equality = true
-no_implicit_optional = true
-warn_unused_ignores = true
-warn_redundant_casts = true
-warn_unused_configs = true
-warn_unreachable = true
-warn_no_return = true
-plugins = ["mypy_django_plugin.main"]
-
-[[tool.mypy.overrides]]
-module = "core.*"
-ignore_missing_imports = false
-
-[[tool.mypy.overrides]]
-module = "tests.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "django.*"
-ignore_missing_imports = false
-
-[[tool.mypy.overrides]]
-module = "*.migrations.*"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-module = "manage"
-ignore_errors = true
-
-[[tool.mypy.overrides]]
-# Django settings use dynamic imports and environment-based configuration
-module = "core.project.settings.*"
-disable_error_code = ["has-type", "misc", "var-annotated"]
-
-[tool.django-stubs]
-django_settings_module = "core.project.settings"
 
 # =============================================================================
 # PYTEST CONFIGURATION

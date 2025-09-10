@@ -7,43 +7,55 @@ repos:
     rev: v6.0.0
     hooks:
       - id: trailing-whitespace
+        name: Trim trailing whitespace
       - id: end-of-file-fixer
+        name: Fix end of files
       - id: check-yaml
+        name: Check YAML syntax
       - id: check-toml
+        name: Check TOML syntax
       - id: check-added-large-files
+        name: Check for added large files
       - id: check-merge-conflict
-      - id: debug-statements
+        name: Check for merge conflicts
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.20.0
+    hooks:
+      - id: pyupgrade
+        name: Upgrade Python syntax
+        args: [--py312-plus]
 
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v4.2.0
     hooks:
       - id: conventional-pre-commit
+        name: Check commit message format
         stages: [commit-msg]
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.8.15
+    hooks:
+      - id: uv-lock
+        name: Update dependency lockfile
+      - id: uv-export
+        name: Export lockfile to requirements
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.12.12
     hooks:
-      - id: ruff
+      - id: ruff-check
+        name: Check code with linter
         args: [--fix]
       - id: ruff-format
+        name: Format code style
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.17.1
+  - repo: local
     hooks:
-      - id: mypy
-        additional_dependencies: [
-          django-environ,
-          django-stubs,
-          {%- if api == "drf" %}
-          djangorestframework,
-          drf_spectacular,
-          types-requests,
-          {%- elif api == "ninja" %}
-          django-ninja,
-          {%- endif %}
-          {%- if db_type == "postgresql" %}
-          psycopg2-binary,
-          {%- elif db_type == "mysql" %}
-          mysqlclient,
-          {%- endif %}
-        ]
+      - id: ty-check
+        name: Check type annotations
+        entry: uvx ty check .
+        language: system
+        types: [python]
+        require_serial: true
+        fail_fast: true
