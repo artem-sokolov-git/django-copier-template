@@ -46,6 +46,10 @@ author_name:
   help: "Author name for the project"
   default: "{{ author_name | default('default_author') }}"
 
+author_slug:
+  type: str
+  default: "{{ author_name | lower | replace(' ', '_') }}"
+
 author_email:
   type: str
   help: "Author email for the project"
@@ -74,8 +78,8 @@ db_name:
 
 db_user:
   type: str
-  help: "Database user (author's email address is used by default)"
-  default: "{{ author_email }}"
+  help: "Database user (author's slug is used by default)"
+  default: "{{ author_slug }}"
 
 db_password:
   type: str
@@ -85,8 +89,8 @@ db_password:
 
 admin_login:
   type: str
-  help: "Django admin panel login (author's email address is used by default)"
-  default: "{{ author_email }}"
+  help: "Django admin panel login (author's slug is used by default)"
+  default: "{{ author_slug }}"
 
 admin_email:
   type: str

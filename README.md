@@ -18,7 +18,7 @@ A modern Copier template for Django projects with production-ready tooling and b
 - **uv** - Fast Python package manager
 - **pre-commit** - Git hooks for code quality
 - **Linting**: Ruff with comprehensive rules
-- **Type Checking**: ty (fast modern type checker)
+- **Type Checking**: ty (fast static type checker)
 - **Testing**: pytest with coverage
 
 ### 🐳 Production Ready

@@ -11,6 +11,4 @@ uvx copier copy .. . \
 
 cd test_project && \
     make rebuild && \
-    make migrate && \
-    make admin && \
     make test_app
