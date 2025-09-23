@@ -201,7 +201,10 @@ __marimo__/
 .DS_Store
 
 # Test folder of the project template
-tests/test_project
+tests/django_copier_template
 
 # Instructions for Claude
 CLAUDE.md
+
+# Tasks file
+tasks.txt

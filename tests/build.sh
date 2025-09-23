@@ -2,13 +2,13 @@
 
 set -e
 
-rm -rf test_project
+rm -rf django_copier_template
 
 uvx copier copy .. . \
-    -d project_name=test_project \
     --trust \
     --defaults
 
-cd test_project && \
+cd django_copier_template &&
     make rebuild && \
-    make test_app
+    make first_app_app
+    make check

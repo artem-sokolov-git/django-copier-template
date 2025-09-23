@@ -12,6 +12,49 @@ RED = \033[0;31m
 NC = \033[0m
 
 # =============================================================================
+# PRE-BUILD PIPELINE
+# =============================================================================
+
+.PHONY: git_init
+git_init: ## Initialize git repository
+	@echo "$(YELLOW)Initializing git repository...$(NC)"
+	@git init
+	@echo "$(GREEN)Git repository initialized!$(NC)"
+
+.PHONY: uv_sync
+uv_sync: ## Sync virtual environment with all extras
+	@echo "$(YELLOW)Syncing virtual environment...$(NC)"
+	@uv sync --all-extras
+	@echo "$(GREEN)Virtual environment synced!$(NC)"
+
+.PHONY: requirements_freeze
+requirements_freeze: ## Freeze requirements to requirements.txt
+	@echo "$(YELLOW)Freezing requirements...$(NC)"
+	@uv export --frozen --output-file=requirements.txt
+	@echo "$(GREEN)Requirements frozen!$(NC)"
+
+.PHONY: install_pre_commit
+install_pre_commit: ## Install pre-commit hooks
+	@echo "$(YELLOW)Installing pre-commit hooks...$(NC)"
+	@uv run pre-commit install --install-hooks
+	@echo "$(GREEN)Pre-commit hooks installed!$(NC)"
+
+.PHONY: autoupdate_pre_commit
+autoupdate_pre_commit: ## Autoupdate pre-commit hooks
+	@echo "$(YELLOW)Autoupdating pre-commit hooks...$(NC)"
+	@uv run pre-commit autoupdate
+	@echo "$(GREEN)Pre-commit hooks autoupdated!$(NC)"
+
+.PHONY: git_add_all
+git_add_all: ## Add all files to git
+	@echo "$(YELLOW)Adding files to git...$(NC)"
+	@git add .
+	@echo "$(GREEN)Files added to git!$(NC)"
+
+.PHONY: pre_build
+pre_build: git_init uv_sync requirements_freeze install_pre_commit autoupdate_pre_commit git_add_all
+
+# =============================================================================
 # MAIN COMMANDS
 # =============================================================================
 
@@ -56,17 +99,26 @@ migrations: ## Create new Django migrations
 	@$(DC) exec web $(MANAGE) makemigrations
 	@echo "$(GREEN)Migrations created!$(NC)"
 
-.PHONY: admin
-admin: ## Create Django admin user
-	@echo "$(YELLOW)Creating admin user...$(NC)"
-	@$(DC) exec web $(MANAGE) create_admin
-	@echo "$(GREEN)Admin user created!$(NC)"
+# =============================================================================
+# DJANGO CUSTOM COMMANDS
+# =============================================================================
+
+{%- if custom_auth %}
+.PHONY: users
+users: ## Create user from users.json
+	@echo "$(YELLOW)Creating users...$(NC)"
+	@$(DC) exec web $(MANAGE) create_users
+{%- else %}
+.PHONY: superuser
+superuser: ## Create superuser interactively
+	@echo "$(YELLOW)Creating superuser... (enter password)$(NC)"
+	@$(DC) exec web $(MANAGE) createsuperuser --username {{ author_slug }} --email {{ author_email }}
+{%- endif %}
 
 .PHONY: %_app
 %_app: ## Create new Django app (make myapp_app)
 	@echo "$(YELLOW)Creating app: $*$(NC)"
 	@$(DC) exec web $(MANAGE) create_app $*
-	@echo "$(GREEN)App $* created!$(NC)"
 
 # =============================================================================
 # BUILD
@@ -78,18 +130,17 @@ build: ## Full build (up + migrations + migrate + admin)
 	@$(MAKE) up
 	@$(MAKE) migrations
 	@$(MAKE) migrate
-	@$(MAKE) admin
-	@echo "$(GREEN)Project ready!$(NC)"
+	{%- if custom_auth %}
+	@$(MAKE) users
+	{%- else %}
+	@$(MAKE) superuser
+	{%- endif %}
 
 .PHONY: rebuild
 rebuild: ## Rebuild with volume cleanup
 	@echo "$(BLUE)Rebuilding with cleanup...$(NC)"
 	@$(MAKE) clean_volumes
-	@$(MAKE) up
-	@$(MAKE) migrations
-	@$(MAKE) migrate
-	@$(MAKE) admin
-	@echo "$(GREEN)Project rebuilt!$(NC)"
+	@$(MAKE) build
 
 # =============================================================================
 # TOOLS
@@ -114,7 +165,7 @@ db_shell: ## Connect to PostgreSQL shell
 .PHONY: check
 check: ## Check code without fixing issues
 	@echo "$(YELLOW)Checking code...$(NC)"
-	@uv run pre-commit run --all-files
+	@uv run pre-commit run --all-files --show-diff-on-failure
 	@echo "$(GREEN)Code check completed!$(NC)"
 
 .PHONY: clean

@@ -1,4 +1,8 @@
-from . import env
+{%- if custom_auth -%}
+from core.project.settings import BASE_DIR, env
+{%- else -%}
+from core.project.settings import env
+{% endif %}
 
 SECRET_KEY = env.str("SECRET_KEY", "change_this_secret_key")
 
@@ -13,14 +17,17 @@ DJANGO_APPS = [
 
 THIRD_PARTY_APPS = [
     # There should be batteries here.
-{%- if api == "drf" %}
+    {%- if api and api_type == "drf" %}
     "rest_framework",
     "drf_spectacular",
-{%- endif %}
+    {%- endif %}
 ]
 
 LOCAL_APPS = [
     "core.project",
+    {%- if custom_auth %}
+    "core.apps.authauth",
+    {%- endif %}
 ]
 
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
@@ -98,7 +105,7 @@ STATIC_URL = "static/"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-{%- if api == "drf" %}
+{%- if api and api_type == "drf" %}
 REST_FRAMEWORK = {
     "DEFAULT_RENDERER_CLASSES": [
         "rest_framework.renderers.JSONRenderer",
@@ -115,4 +122,14 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "{{ project_version }}",
     "SERVE_INCLUDE_SCHEMA": False,
 }
+{%- endif %}
+
+{%- if custom_auth %}
+# =============================================================================
+# CUSTOM AUTH USER MODEL
+# =============================================================================
+AUTH_USER_MODEL = "authauth.User"
+AUTH_LOGIN_FIELD = env.str("AUTH_LOGIN_FIELD", default="{{ auth_login_field }}")  # email or phone
+USERS_JSON_PATH = BASE_DIR / env.str("USERS_JSON_PATH", default="data/users.json")
+# =============================================================================
 {%- endif %}

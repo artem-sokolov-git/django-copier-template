@@ -4,19 +4,19 @@
 
 [project]
 name = "{{ project_slug }}"
-version = "{{ project_version }}"
+version = "0.1.0"
 description = "{{ project_description }}"
 readme = "README.md"
 requires-python = ">={{ python_version }}"
 license = { file = "LICENSE" }
-authors = [{ name = "{{ author_name }}", email = "{{ author_email }}" }]
+authors = [{ name = "{{ author_full_name }}", email = "{{ author_email }}" }]
 dependencies = [
     "django>=5.2.4",
     "django-environ>=0.12.0",
-    {%- if api == "drf" %}
+    {%- if api and  api_type == "drf" %}
     "djangorestframework>=3.16.0",
     "drf-spectacular>=0.27.2",
-    {%- elif api == "ninja" %}
+    {%- elif api and api_type == "ninja" %}
     "django-ninja>=1.4.3",
     {%- endif %}
     {%- if db_type == "postgresql" %}
@@ -29,7 +29,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pre-commit>=4.2.0",
-    {%- if api == "drf" %}
+    {%- if api and api_type == "drf" %}
     "djangorestframework-stubs>=3.16.0",
     {%- endif %}
     "pytest>=8.4.1",
@@ -43,13 +43,14 @@ dev = [
 
 [tool.ruff]
 target-version = "py{{ python_version.split('.')[0] + python_version.split('.')[1] }}"
-line-length = 92
+line-length = 120
 
 exclude = [
     "*/migrations/*",
     "*/staticfiles/*",
     "*/media/*",
     "*/locale/*",
+    "*.txt",
 ]
 
 [tool.ruff.lint]

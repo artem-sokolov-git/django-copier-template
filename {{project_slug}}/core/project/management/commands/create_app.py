@@ -6,7 +6,17 @@ from django.core.management import call_command
 from django.core.management.base import BaseCommand
 
 
-class Command(BaseCommand):
+class CustomCommand(BaseCommand):
+    def _message(self, message_type: str, message_text: str) -> None:
+        """Helper method for outputting styled messages."""
+        style_func = getattr(self.style, message_type.upper(), None)
+        if style_func:
+            self.stdout.write(style_func(message_text))
+        else:
+            self.stdout.write(message_text)
+
+
+class Command(CustomCommand):
     help = "Create Django app with proper structure"
 
     def _create_django_app(self, base_dir: Path, app_name: str) -> Path:
@@ -17,7 +27,6 @@ class Command(BaseCommand):
         apps_dir.mkdir(parents=True, exist_ok=True)
 
         if app_dir.exists():
-            self.stdout.write(self.style.ERROR(f'App directory "{app_dir}" already exists'))
             raise FileExistsError(f"App directory {app_dir} already exists")
 
         app_dir.mkdir(parents=False, exist_ok=False)
@@ -30,9 +39,7 @@ class Command(BaseCommand):
         apps_file = app_dir / "apps.py"
         if apps_file.exists():
             content = apps_file.read_text(encoding="utf-8")
-            content = content.replace(
-                f"name = '{app_name}'", f"name = 'core.apps.{app_name}'"
-            )
+            content = content.replace(f"name = '{app_name}'", f"name = 'core.apps.{app_name}'")
             apps_file.write_text(content, encoding="utf-8")
 
     def _add_to_local_apps(self, base_dir: Path, app_name: str) -> bool:
@@ -69,11 +76,9 @@ class Command(BaseCommand):
             self._update_django_app_config(app_dir, app_name)
 
             if self._add_to_local_apps(base_dir, app_name):
-                self.stdout.write(
-                    self.style.SUCCESS(f'Added "core.apps.{app_name}" to LOCAL_APPS')
-                )
+                self._message("success", f'Added "core.apps.{app_name}" to LOCAL_APPS')
 
-            self.stdout.write(self.style.SUCCESS(f'App "{app_name}" created at {app_dir}'))
+            self._message("success", f'App "{app_name}" created at {app_dir}')
 
         except FileExistsError:
             return

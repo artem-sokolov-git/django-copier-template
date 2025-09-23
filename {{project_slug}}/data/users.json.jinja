@@ -1,0 +1,13 @@
+[
+    {
+        "email": "{{ admin_email }}",
+        {%- if auth_login_field == "phone" %}
+        "phone": "{{ admin_phone }}",
+        {%- endif %}
+        "first_name": "{{ admin_first_name }}",
+        "last_name": "{{ admin_last_name }}",
+        "password": "{{ admin_password }}",
+        "is_superuser": true,
+        "is_staff": true
+    }
+]

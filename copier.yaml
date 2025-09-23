@@ -5,80 +5,154 @@ _exclude:
   - "/tests"
 
 _message_before_copy: |
-
-  🚀 Welcome to Django Core Template!
-
+  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  +++++++++++++++ 🚀 Welcome to Django Core Template! +++++++++++++++++++++++
+  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
   This template helps you quickly create a modern Django project with:
-  • Pre-configured application architecture
-  • Choice of API framework (Django Ninja or DRF)
-  • Database setup (PostgreSQL or MySQL)
-  • Ready-to-use Docker configuration
-  • Development tools (ruff, pre-commit hooks)
-
-  Answer a few questions and we'll create a development-ready project for you!
+  * Pre-configured application architecture
+  * Choice of API framework (Django Ninja or DRF)
+  * Database setup (PostgreSQL or MySQL)
+  * Ready-to-use Docker configuration
+  * Development tools (ruff, pre-commit hooks)
+  ----------------------------------------------------------------------------
+  Please enter the following details to customize your project:
+  ----------------------------------------------------------------------------
 
 project_name:
   type: str
-  help: "Project name"
-  default: "Django Core Project"
+  help: "Project name (e.g., My Awesome Project):"
+  default: "Django Copier Template"
 
 project_slug:
   type: str
+  when: false
   default: "{{ project_name | lower | replace(' ', '_') }}"
-
-project_version:
-  type: str
-  help: "Project version"
-  default: "{{ project_version | default('0.1.0') }}"
 
 project_description:
   type: str
-  help: "Project description"
-  default: "This is a basic description of the project '{{ project_name }}'"
+  help: "Description of your project (e.g., A web application for ...):"
+  default: "A Django project created with Django Copier Template."
 
 python_version:
   type: str
-  help: "Python version"
-  default: "{{ python_version | default('3.12.11') }}"
+  help: "Python version for your project (e.g., 3.12.11):"
+  default: "3.12.11"
 
-author_name:
+# =============================================================================
+# AUTHOR INFORMATION
+# =============================================================================
+
+author_full_name:
   type: str
-  help: "Author name for the project"
-  default: "{{ author_name | default('default_author') }}"
+  help: "Full name of the project author (e.g., John Doe):"
+  default: "{{ author_full_name | default('John Doe') }}"
+
+author_first_name:
+  type: str
+  when: false
+  default: "{{ author_full_name.split(' ')[0] }}"
+
+author_last_name:
+  type: str
+  when: false
+  default: "{{ author_full_name.split(' ')[1] }}"
 
 author_slug:
   type: str
-  default: "{{ author_name | lower | replace(' ', '_') }}"
+  when: false
+  default: "{{ author_full_name | lower | replace(' ', '_') }}"
 
 author_email:
   type: str
-  help: "Author email for the project"
-  default: "{{ author_email | default('author@email.com') }}"
+  help: "Email of the project author (e.g., johndoe@email.com):"
+  default: "{{ author_email | default('johndoe@email.com') }}"
+
+# =============================================================================
+# CUSTOM AUTHORIZATION & AUTHENTICATION
+# =============================================================================
+
+custom_auth:
+  type: bool
+  help: |
+    Do you want to set up custom user authentication and authorization?:
+      * If yes, you can choose to authenticate users via email or phone.
+      * If no, the default Django authentication (username & password) will be used.
+  default: true
+
+auth_login_field:
+  type: str
+  when: "{{ custom_auth == true }}"
+  help: "Select the field for user authentication (email or phone):"
+  choices:
+    - email
+    - phone
+  default: "email"
+
+admin_first_name:
+  type: str
+  when: false
+  default: "{{ author_first_name }}"
+
+admin_last_name:
+  type: str
+  when: false
+  default: "{{ author_last_name }}"
+
+admin_email:
+  type: str
+  when: "{{ custom_auth == true }}"
+  help: "Enter the administrator's email (author's email is used by default):"
+  default: "{{ author_email }}"
+
+admin_phone:
+  type: str
+  when: "{{ custom_auth == true and auth_login_field == 'phone' }}"
+  help: "Enter the administrator's phone number (in E.164 format, e.g., +1234567890):"
+
+admin_password:
+  secret: true
+  when: "{{ custom_auth == true }}"
+  help: "Enter the administrator's password (automatically generated in data/users.json by default):"
+  default: "{% from 'secrets.jinja' import generate_password %}{{ generate_password(12) }}"
+
+# =============================================================================
+# API FRAMEWORK
+# =============================================================================
 
 api:
+  type: bool
+  help: "Do you want to include an API framework (Django Ninja or DRF)?:"
+  default: true
+
+api_type:
   type: str
-  help: "API framework"
+  when: "{{ api == true }}"
+  help: "Select the API framework for your project:"
   choices:
-    - ninja
     - drf
-  default: "{{ api | default('ninja') }}"
+    - ninja
+  default: "drf"
+
+# =============================================================================
+# DATABASE
+# =============================================================================
 
 db_type:
   type: str
-  help: "Database type"
+  help: "Select the type of database for your project:"
   choices:
     - postgresql
     - mysql
-  default: "{{ db_type | default('postgresql') }}"
+  default: "postgresql"
 
 db_name:
   type: str
-  help: "Database name"
+  help: "Database name (project slug is used by default)"
   default: "{{ project_slug }}_db"
 
 db_user:
   type: str
-  help: "Database user (author's slug is used by default)"
+  help: "Database user (author slug is used by default)"
   default: "{{ author_slug }}"
 
 db_password:
@@ -87,72 +161,37 @@ db_password:
   help: "Database password (automatically generated in .env by default)"
   default: "{% from 'secrets.jinja' import generate_password %}{{ generate_password(12) }}"
 
-admin_login:
-  type: str
-  help: "Django admin panel login (author's slug is used by default)"
-  default: "{{ author_slug }}"
-
-admin_email:
-  type: str
-  help: "Django admin panel email (author's email address is used by default)"
-  default: "{{ author_email }}"
-
-admin_password:
-  secret: true
-  help: "Django admin panel password (automatically generated in .env by default)"
-  default: "{% from 'secrets.jinja' import generate_password %}{{ generate_password(12) }}"
+# =============================================================================
+# OTHER SETTINGS
+# =============================================================================
 
 docker_django_port:
   type: str
-  help: "Django application port"
+  help: "Port for Django application in Docker (8000 is used by default):"
   default: "8000"
 
 secret_key:
-  secret: true
-  help: "Django secret key (automatically generated in .env by default)"
+  type: str
+  when: false
   default: "{% from 'secrets.jinja' import generate_secret_key %}{{ generate_secret_key() }}"
 
 _message_after_copy: |
+  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  +++++++++++++++++++++++++ 🎉 Project created! 🎉 ++++++++++++++++++++++++++++
+  +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+  Next steps:
+  1. Navigate to your project: cd {{ project_slug }}
+  2. Build and start Docker containers: make build
+  3. Open http://localhost:{{ docker_django_port }} in your browser
+  -----------------------------------------------------------------------------
+  Happy coding! 🚀
+  -----------------------------------------------------------------------------
 
-    🎉 Your project "{{ project_name }}" has been created successfully!
-
-    Next steps:
-    1. Navigate to your project: cd {{ project_slug }}
-    2. Start development containers: make up
-    3. Apply migrations: make migrate
-    4. Create superuser: make admin
-    5. Open http://localhost:{{ docker_django_port }} in your browser
-
-    Happy coding! 🚀
+# =============================================================================
+# POST-COPY TASKS
+# =============================================================================
 
 _tasks:
-  - command: "mv .env.example .env"
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
-  - command: "git init && git add ."
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
-  - command: "uv sync --all-extras"
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
-  - command: "uv run pre-commit install --install-hooks"
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
-  - command: "uv run pre-commit autoupdate"
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
-  - command: "git add ."
-    when: "{{ _copier_operation == 'copy' }}"
-    working_directory: "{{ project_slug }}"
-
-  - command: "git commit -m 'feat: initial project setup
-    - {{ api|title }} API framework
-    - {{ db_type|title }} database
-    - Pre-commit hooks configured'"
+  - command: "make pre_build"
     when: "{{ _copier_operation == 'copy' }}"
     working_directory: "{{ project_slug }}"
